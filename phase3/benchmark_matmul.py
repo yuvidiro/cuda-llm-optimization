@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import torch
@@ -54,10 +55,14 @@ def main() -> None:
     print()
 
     print("Building CUDA extension (first run can take a little while)...")
+    cuda_flags = ["-O3"]
+    if sys.platform == "win32":
+        cuda_flags.extend(["-Xcompiler", "/Zc:preprocessor"])
+
     ext = load(
         name="phase3_naive_matmul",
         sources=[str(CUDA_SOURCE)],
-        extra_cuda_cflags=["-O3"],
+        extra_cuda_cflags=cuda_flags,
         verbose=True,
     )
 
